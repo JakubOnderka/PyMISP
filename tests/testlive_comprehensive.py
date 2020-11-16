@@ -697,31 +697,41 @@ class TestComprehensive(unittest.TestCase):
 
         # Event, attribute and object should not exists before event deletion
         self.assertFalse(self.user_misp_connector.event_exists(event))
+        self.assertFalse(self.user_misp_connector.event_exists(event.uuid))
         self.assertFalse(self.user_misp_connector.attribute_exists(attribute))
+        self.assertFalse(self.user_misp_connector.attribute_exists(attribute.uuid))
         self.assertFalse(self.user_misp_connector.object_exists(misp_object))
+        self.assertFalse(self.user_misp_connector.object_exists(misp_object.uuid))
 
         try:
-            self.user_misp_connector.add_event(event)
+            event = self.user_misp_connector.add_event(event)
 
             self.assertTrue(self.user_misp_connector.event_exists(event))
             self.assertTrue(self.user_misp_connector.event_exists(event.uuid))
             self.assertTrue(self.user_misp_connector.event_exists(event.id))
-            self.assertTrue(self.user_misp_connector.attribute_exists(attribute))
-            self.assertTrue(self.user_misp_connector.attribute_exists(attribute.uuid))
-            self.assertTrue(self.user_misp_connector.attribute_exists(attribute.id))
-            self.assertTrue(self.user_misp_connector.object_exists(misp_object))
-            self.assertTrue(self.user_misp_connector.object_exists(misp_object.id))
-            self.assertTrue(self.user_misp_connector.object_exists(misp_object.uuid))
+
+            self.assertTrue(self.user_misp_connector.attribute_exists(event.objects[0].attributes[0]))
+            self.assertTrue(self.user_misp_connector.attribute_exists(event.objects[0].attributes[0].uuid))
+            self.assertTrue(self.user_misp_connector.attribute_exists(event.objects[0].attributes[0].id))
+
+            self.assertTrue(self.user_misp_connector.object_exists(event.objects[0]))
+            self.assertTrue(self.user_misp_connector.object_exists(event.objects[0].id))
+            self.assertTrue(self.user_misp_connector.object_exists(event.objects[0].uuid))
         finally:
             self.admin_misp_connector.delete_event(event)
 
         # Event, attribute and object should not exists after event deletion
         self.assertFalse(self.user_misp_connector.event_exists(event))
+        self.assertFalse(self.user_misp_connector.event_exists(event.uuid))
         self.assertFalse(self.user_misp_connector.event_exists(event.id))
-        self.assertFalse(self.user_misp_connector.attribute_exists(attribute))
-        self.assertFalse(self.user_misp_connector.attribute_exists(attribute.id))
-        self.assertFalse(self.user_misp_connector.object_exists(misp_object))
-        self.assertFalse(self.user_misp_connector.object_exists(misp_object.id))
+
+        self.assertFalse(self.user_misp_connector.attribute_exists(event.objects[0].attributes[0]))
+        self.assertFalse(self.user_misp_connector.attribute_exists(event.objects[0].attributes[0].uuid))
+        self.assertFalse(self.user_misp_connector.attribute_exists(event.objects[0].attributes[0].id))
+
+        self.assertFalse(self.user_misp_connector.object_exists(event.objects[0]))
+        self.assertFalse(self.user_misp_connector.object_exists(event.objects[0].id))
+        self.assertFalse(self.user_misp_connector.object_exists(event.objects[0].uuid))
 
     def test_simple_event(self):
         '''Search a bunch of parameters:
